@@ -1,0 +1,25 @@
+%YAML 1.2
+---
+# http://www.sublimetext.com/docs/3/syntax.html
+name: 834 x12
+file_extensions: [x12, edi]
+scope: text.plain
+contexts:
+  main:
+    #header match
+    - match: "^ISA"
+      scope: entity.name.class
+    - match: "INS\\*Y"
+      scope: entity.name.class
+    - match: "INS\\*N"
+      scope: entity.other.inherited-class
+    - match: \b(^GS|^ST|^BGN|^REF|^QTY|^N[1-4]|^DTP|^NM1|^PER|^DMG|^HD)\b
+      scope: keyword.control
+    - match: \b(^ICM|^LUI|^DSB|^COB|^LS|^LX|^LE)\b
+      scope: variable.other
+    - match: "\\*"
+      scope: keyword.control.punctuation
+    - match: "~"
+      scope: constant.character.escape
+    #- match: "\\*~"
+    #  scope: invalid
