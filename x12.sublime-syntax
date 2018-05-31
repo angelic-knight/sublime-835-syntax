@@ -13,7 +13,13 @@ contexts:
       scope: entity.name.class
     - match: "INS\\*N"
       scope: entity.other.inherited-class
-    - match: \b(^GS|^ST|^BGN|^REF|^QTY|^N[1-4]|^DTP|^NM1|^PER|^DMG|^HD|^HLH|^AMT)\b
+# 2300 Loop Begin/End
+    - match: "^HD\\*030"
+      scope: punctuation.definition.tag.begin
+    - match: "^HD"
+# Individual Segments	
+      scope: punctuation.definition.tag.end
+    - match: \b(^GS|^ST|^BGN|^REF|^QTY|^N[1-4]|^DTP|^NM1|^PER|^DMG|^HLH|^AMT)\b
       scope: keyword.control
     - match: \b(^ICM|^LUI|^DSB|^COB|^LS|^LX|^LE)\b
       scope: variable.other
