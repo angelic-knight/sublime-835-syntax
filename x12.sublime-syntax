@@ -1,26 +1,70 @@
 %YAML 1.2
 ---
 # http://www.sublimetext.com/docs/3/syntax.html
-name: 834 x12
+name: 835 x12
 file_extensions: [x12, edi]
 scope: text.plain
 contexts:
   main:
     #header match
-    - match: "^ISA"
+    - match: "(^ISA|^GS)"
+      push: brackets
       scope: entity.name.class
+    - match: "^IEA"
+      scope: invalid.illegal.stray-bracket-end
+    # BRP Amount color-coding
+    - match: "(^BPR)(\\*)\\w+(\\*)(-?\\d*.?\\d+)"
+      captures:
+        1: string
+        2: keyword.control.punctuation
+        3: keyword.control.punctuation
+        4: string
+    # CLP Amount color-coding
+    - match: "(^CLP)(\\*)\\w+(\\*)\\w+(\\*)(-?\\d*.?\\d+)(\\*)(-?\\d*.?\\d+)"
+      captures:
+        1: string
+        2: keyword.control.punctuation
+        3: keyword.control.punctuation
+        4: keyword.control.punctuation
+        5: string
+        6: keyword.control.punctuation
+        7: string
+    # SVC Amount color-coding
+    - match: "(^SVC)(\\*)[\\w|\\>]+(\\*)(-?\\d*.?\\d*)(\\*)(-?\\d*.?\\d+)"
+      captures:
+        1: string
+        2: keyword.control.punctuation
+        3: keyword.control.punctuation
+        4: string
+        5: keyword.control.punctuation
+        6: string
+    # CAS Amount color-coding
+    - match: "(^CAS)(\\*)[\\w|\\>]+(\\*)-?\\d*.?\\d+(\\*)(-?\\d*.?\\d+)"
+      captures:
+        1: string
+        2: keyword.control.punctuation
+        3: keyword.control.punctuation
+        4: keyword.control.punctuation
+        5: string
+    # Old garbage that we don't need:
     - match: "INS\\*Y"
       scope: entity.name.class
     - match: "INS\\*N"
       scope: entity.other.inherited-class
-# 2300 Loop Begin/End
-    - match: "^HD\\*030"
-      scope: punctuation.definition.tag.begin
-    - match: "^HD"
-# Individual Segments	
-      scope: punctuation.definition.tag.end
-    - match: \b(^GS|^ST|^BGN|^REF|^QTY|^N[1-4]|^DTP|^NM1|^PER|^DMG|^HLH|^AMT)\b
+    - match: "^LX"
       scope: keyword.control
+    # End of old garbage
+
+    # Transaction Set Header and trailer
+    - match: "^ST"
+      push: brackets
+      scope: entity.other.inherited-class
+    - match: "^SE"
+      scope: invalid.illegal.stray-bracket-end
+
+    # Individual Segments	
+    - match: \b(^GS|^BGN|^REF|^SE|^QTY|^N[1-4]|^DTP|^NM1|^PER|^DMG|^HLH|^AMT|^BPR|^TRN|^DTM|^SVC|^CAS|^CLP)\b
+      scope: string
     - match: \b(^ICM|^LUI|^DSB|^COB|^LS|^LX|^LE)\b
       scope: variable.other
     - match: "\\*"
@@ -29,3 +73,12 @@ contexts:
       scope: constant.character.escape
     - match: \b\*+\~
       scope: invalid.illegal.stray-delimiter-end
+
+  brackets:
+    - match: "(^SE)"
+      pop: true
+      scope: entity.other.inherited-class
+    - match: "(^IEA|^GE)"
+      pop: true
+      scope: entity.name.class
+    - include: main
